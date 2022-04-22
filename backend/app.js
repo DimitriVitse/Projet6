@@ -1,6 +1,8 @@
 /* Import des modules necessaires */
 const express = require("express");
 const userRoutes = require("./routes/user");
+const sauceRoutes = require("./routes/sauce");
+const path = require("path");
 
 
 /* Initialisation de l'API */
@@ -9,18 +11,6 @@ const app = express();
 app.use(express.urlencoded({ extended: true }))
 
 app.use(express.json());
-
-/* Enregistrement des sauces */
-
-app.post('/api/stuff', (req, res, next) => {
-    delete req.body._id;
-    const sauce = new Sauce({
-        ...req.body
-    });
-    sauce.save()
-        .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
-        .catch(error => res.status(400).json({ error }));
-});
 
 /* Mise en place reponses headers */
 app.use((req, res, next) => {
@@ -55,12 +45,8 @@ app.use(
 );
 
 /* Mise en place du routage */
+app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/auth", userRoutes);
-
-// router.get('/', auth, stuffCtrl.getAllStuff);
-// router.post('/', auth, multer, stuffCtrl.createSauce);
-// router.get('/:id', auth, stuffCtrl.getOneSauce);
-// router.put('/:id', auth, stuffCtrl.modifySauce);
-// router.delete('/:id', auth, stuffCtrl.deleteSauce);
+app.use("/api/sauces", sauceRoutes);
 
 module.exports = app;
